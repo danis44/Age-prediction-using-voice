@@ -39,25 +39,24 @@ audio.terminate()
 audio_data = np.frombuffer(b"".join(frames), dtype=np.int16)
 
 
-data = [
-    ([500.0, 120.0, 2500.0, 3200.0, ...], 25),  # Voice sample 1, age 25
-    ([450.0, 110.0, 2400.0, 3100.0, ...], 35),  # Voice sample 2, age 35
-    ([400.0, 100.0, 2300.0, 3000.0, ...], 45),  # Voice sample 3, age 45
+# Placeholder for actual feature extraction from audio_data
+def extract_features(audio_data, rate):
+    # Example feature: average power spectrum density
+    power_spectrum = np.abs(np.fft.fft(audio_data)) ** 2
+    freqs = np.fft.fftfreq(len(audio_data), 1 / rate)
+    return [np.mean(power_spectrum), np.std(power_spectrum), np.max(power_spectrum)]
+
+
+# Simulated dataset with features extracted from real audio samples
+dataset = [
+    (extract_features(audio_data, RATE), 25),  # Example voice sample with age 25
+    (extract_features(audio_data, RATE), 35),  # Example voice sample with age 35
+    (extract_features(audio_data, RATE), 45),  # Example voice sample with age 45
 ]
 
-
-# Calculate wavelength and other features (e.g., pitch, formants, etc.)
-wave_length = RATE / (np.argmax(audio_data[CHUNK:]) + CHUNK)
-# Code to extract additional features from audio_data
-
-# Load your actual dataset
-dataset = data
-
 # Extract features and target
-X = np.array([sample[0] for sample in dataset]).reshape(
-    -1,
-)  # Adjust n_features based on your feature vector size
-y = np.array([sample[1] for sample in dataset])
+X = np.array([sample[0] for sample in dataset])  # Extract features from dataset
+y = np.array([sample[1] for sample in dataset])  # Extract target values from dataset
 
 # Split the dataset into train, validation, and test sets
 X_train, X_test, y_train, y_test = train_test_split(
@@ -89,7 +88,7 @@ print(f"Test MAE: {test_mae:.2f}")
 
 # Predict age based on detected voice features
 voice_features = scaler.transform(
-    np.array(wave_length).reshape(1, -1)
-)  # Adjust the shape based on your feature vector size
+    np.array(extract_features(audio_data, RATE)).reshape(1, -1)
+)
 predicted_age = model.predict(voice_features)[0]
 print("Predicted age:", predicted_age)
