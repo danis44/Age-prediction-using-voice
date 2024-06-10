@@ -2,7 +2,7 @@ import os
 import numpy as np
 from pydub import AudioSegment
 import re
-import glob
+import json
 
 # Parameters
 CHUNK = 1024
@@ -86,6 +86,13 @@ def main():
             dataArray.append([age, wave_length])
 
     print("i'm all Data meeeee ===> ", dataArray)
+
+    # Writing it in a text file
+    with open("data_v5.txt", "w") as file:
+        # Open a file in write mode
+
+        # Convert the data_array to JSON string and write it to the file
+        json.dump(dataArray, file)
 
 
 # Easy Data
